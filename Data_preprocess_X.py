@@ -1,14 +1,15 @@
+# This file obtrain strain information from RADIOSS ouput file .sta file
+
 import math
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d
 
-input_name = "WindingStructureModelV10_offset=0_"
-input_number = 141
+input_name = "WindingStructureModelV10_offset=0_" # file name
+input_number = 141 # total step number
 output_name = "C_SOC00_E_"
 output_log = "log_C_SOC00_E.csv"
-
 
 def Smin_max(a):
     if len(a) == 1:
@@ -23,11 +24,12 @@ def Smin_max(a):
     return min(lmin, rmin), max(lmax, rmax)
 
 # open files
-
 log = open(output_log, "w", encoding='utf-8', newline='')
 
 j = 1
 N = input_number
+
+# define max min value for each component, run one time this file and check the output, and then modify
 
 x1fmin = -0.88443056981083
 x1fmax = 0.13270430380669
@@ -127,21 +129,22 @@ while (j<=N):
     for i in range(len(X)):
         if X[i] not in X1:
             X1.append(X[i])
-    #
+    
     print(len(X1),"point left")
+    
+#     enable the following code to check the max, min value
 
-    # X1min, X1max = Smin_max([x[0] for x in X1])
-    # X2min, X2max = Smin_max([x[1] for x in X1])
-    # X3min, X3max = Smin_max([x[2] for x in X1])
-    # X4min, X4max = Smin_max([x[3] for x in X1])
-    # X5min, X5max = Smin_max([x[4] for x in X1])
-    # X6min, X6max = Smin_max([x[5] for x in X1])
+#     X1min, X1max = Smin_max([x[0] for x in X1])
+#     X2min, X2max = Smin_max([x[1] for x in X1])
+#     X3min, X3max = Smin_max([x[2] for x in X1])
+#     X4min, X4max = Smin_max([x[3] for x in X1])
+#     X5min, X5max = Smin_max([x[4] for x in X1])
+#     X6min, X6max = Smin_max([x[5] for x in X1])
 
-    # print(X1min,X1max)
-    # print(X2min,X2max)
-    # print(X3min,X3max)
-    # print(X4min,X4max)
-    #
+#     print(X1min,X1max)
+#     print(X2min,X2max)
+#     print(X3min,X3max)
+#     print(X4min,X4max)
 
     writer = csv.writer(stressfile)
     for i in range(len(X1)):
