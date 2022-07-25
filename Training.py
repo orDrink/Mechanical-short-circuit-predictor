@@ -1,3 +1,4 @@
+# Save the file in the same folder as the sample data files and run
 
 import math
 import csv
@@ -10,15 +11,10 @@ from sklearn.metrics import r2_score
 import time
 from sklearn import preprocessing
 
-filename = ["C","I","B"]
-filename_test=["C_test_","I_test_","B_test_"]
+filename = ["C","I","B"] # training samples file list
+filename_test=["C_test_","I_test_","B_test_"] # testing samples file list
 
-testsample = np.array([141,181,181])
-
-
-# testsample = np.array([161])
-# filename_test=["I_test_"]
-
+testsample = np.array([141,181,181])  # total step of each test case
 
 # open files
 p = []
@@ -63,11 +59,6 @@ for name in filename:
         j = j + 1
         n = n + 1
     i = i + 1
-
-# C_range = np.logspace(-2, 10, 13)
-# gamma_range = np.logspace(-9, 3, 13)
-# param_grid = dict(gamma=gamma_range, C=C_range)
-
 
 svr = SVR(kernel='rbf', C=100, gamma=0.001, epsilon=0.0001)
 # svr = SVR(kernel='sigmoid', gamma=0.001, coef0=0.001)
@@ -134,7 +125,6 @@ for name in filename_test:
     i = i + 1
 
 Y = np.array(p)
-
 
 plt.show()
 
