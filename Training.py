@@ -10,11 +10,15 @@ from scipy.stats import pearsonr
 from sklearn.metrics import r2_score
 import time
 from sklearn import preprocessing
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import ShuffleSplit
 
-filename = ["C","I","B"] # training samples file list
-filename_test=["C_test_","I_test_","B_test_"] # testing samples file list
+SOC = [0.0, 0.0, 0.0] # SOC of the training cases
+filename = ["C_SOC00_E","I_SOC00_E","B_SOC00_E"] # training samples file list
 
-testsample = np.array([141,181,181])  # total step of each test case
+SOC_test = [0.0, 0.0, 0.0] # SOC of the testing cases
+filename_test=["C_SOC00_E_test","I_SOC00_E_test","B_SOC00_E_test"] # testing samples file list
+testsample = np.array([141,181,181,141,181,181])
 
 # open files
 p = []
@@ -39,13 +43,13 @@ print("training sample", int(sum(N)))
 
 i = 0
 d = 11
-X = np.zeros([int(sum(N)), d * d * d * d])
+X = np.zeros([int(sum(N)), d * d * d * d + 1])
 n = 0
 
 for name in filename:
     j = 0
     while (j < N[i]):
-        sfile = open(name + str(j + 1) + ".csv", "r")
+        sfile = open(name + "_" + str(j + 1) + ".csv", "r")
         reader_sfile = csv.reader(sfile)
         for line in reader_sfile:
             x1 = int(float(line[0]) * 10)
@@ -54,27 +58,34 @@ for name in filename:
             x4 = int(float(line[3]) * 10)
             position = x1 + d * x2 + d * d * x3 + d * d * d * x4
             if (position < d * d * d * d):
-                X[n][position] = 1
+                X[n][position + 1] = 1
         sfile.close()
+        X[n][0] = SOC[i]
         j = j + 1
         n = n + 1
     i = i + 1
 
-svr = SVR(kernel='rbf', C=100, gamma=0.001, epsilon=0.0001)
+svr = SVR(kernel='rbf', C=500, gamma=0.00001, epsilon=0.01)
 # svr = SVR(kernel='sigmoid', gamma=0.001, coef0=0.001)
 t0 = time.time()
 regr = svr.fit(X, Y)
 print(time.time() - t0, "seconds process time")
 
+# cv = ShuffleSplit(n_splits=5, test_size=0.3, random_state=0)
+# scores = cross_val_score(svr, X, Y, cv=cv)
+# print(scores)
+# print(scores.mean(),scores.std())
+
 i = 0
 for name in filename_test:
+
     Test_sample = testsample[i]
     testfile = name
     print(name)
-    Xp = np.zeros([Test_sample, d * d * d * d])
+    Xp = np.zeros([Test_sample, d * d * d * d + 1])
     j = 0
     while (j < Test_sample):
-        sfile = open(testfile + str(j + 1) + ".csv", "r")
+        sfile = open(testfile + "_" + str(j + 1) + ".csv", "r")
         reader_sfile = csv.reader(sfile)
         for line in reader_sfile:
             x1 = int(float(line[0]) * 10)
@@ -83,12 +94,13 @@ for name in filename_test:
             x4 = int(float(line[3]) * 10)
             position = x1 + d * x2 + d * d * x3 + d * d * d * x4
             if (position < d * d * d * d):
-                Xp[j][position] = 1
+                Xp[j][position + 1] = 1
         sfile.close()
+        Xp[j][0] = SOC_test[i]
         j = j + 1
 
     pt = []
-    ofile = open(name + "Y.csv", "r")
+    ofile = open(name + "_Y.csv", "r")
     reader_ofile = csv.reader(ofile)
     for item in reader_ofile:
         pt.append(float(item[0]))
@@ -109,8 +121,8 @@ for name in filename_test:
         # if y1[k]<0: y1[k] = 0
         x1t = str(x1[k]*0.0005)
         x2t = str(y1[k])
-        x3t = str(pt[k])
-        writer.writerow([x1t, x2t, x3t])
+        # x3t = str(pt[k])
+        writer.writerow([x1t, x2t])
     predictfile.close()
 
 
@@ -126,6 +138,7 @@ for name in filename_test:
 
 Y = np.array(p)
 
+# plt.legend(handles = [l1, l2,], labels = ['a', 'b'], loc = 'best')
 plt.show()
 
 # print(r2_score(y1, y2))
