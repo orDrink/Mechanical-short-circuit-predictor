@@ -1,10 +1,12 @@
+# This file calcuate ISC triggering possiblity - displacement curve 
+
 import math
 import csv
 import numpy as np
 from numpy import *
 from matplotlib import pyplot as plt
 
-Yfile=["C","I","B","C_test","I_test","B_test"]
+Yfile=["C","I","B","C_test","I_test","B_test"] # Files need to be processed 
 
 def Smin_max(a):
     if len(a) == 1:
@@ -19,8 +21,8 @@ def Smin_max(a):
     return min(lmin, rmin), max(lmax, rmax)
 
 for filename in Yfile:
-    curvefile = open(filename+"_curve.csv", "r")
-    peakfile = open(filename+"_peak.csv", "r")
+    curvefile = open(filename+"_curve.csv", "r") # This file save simulation force - displacement curve 
+    peakfile = open(filename+"_peak.csv", "r") # This file save ISC triggering forces from repeat tests
     pfile = open(filename+"_Y.csv", "w",encoding='utf-8',newline='')
 
 # stdf = 0.02464
